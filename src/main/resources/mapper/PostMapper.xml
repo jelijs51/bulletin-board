@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.bulletin_board.mapper.PostMapper">
+
+    <select id="getAllPosts" resultType="Post">
+        SELECT * FROM post WHERE is_deleted = false
+    </select>
+
+    <select id="getPostById" resultType="Post">
+        SELECT * FROM post WHERE post_id = #{postId} AND is_deleted = false
+    </select>
+
+    <insert id="insertPost" parameterType="Post">
+        INSERT INTO post (title, content, creation_date, modification_date, views, author, password, is_deleted)
+        VALUES (#{title}, #{content}, #{creationDate}, #{modificationDate}, #{views}, #{author}, #{password}, #{isDeleted})
+    </insert>
+
+    <update id="updatePost" parameterType="Post">
+        UPDATE post
+        SET title = #{title},
+            content = #{content},
+            modification_date = #{modificationDate},
+            views = #{views},
+            author = #{author},
+            password = #{password}
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="deletePost" parameterType="long">
+        UPDATE post
+        SET is_deleted = true
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="incrementViews" parameterType="long">
+        UPDATE post
+        SET views = views + 1
+        WHERE post_id = #{postId}
+    </update>
+
+</mapper>

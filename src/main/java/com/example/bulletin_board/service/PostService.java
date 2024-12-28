@@ -1,18 +1,15 @@
-package com.example.bulletin_board.mapper;
+package com.example.bulletin_board.service;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Mapper;
-
 import com.example.bulletin_board.model.Post;
 
-@Mapper
-public interface PostMapper {
+public interface PostService {
     List<Post> getAllPosts();
 
     Post getPostById(Long postId);
 
-    void insertPost(Post post);
+    void createPost(Post post);
 
     void updatePost(Post post);
 
