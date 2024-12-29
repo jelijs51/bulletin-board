@@ -28,7 +28,7 @@
         WHERE post_id = #{postId}
     </update>
 
-    <update id="deletePost" parameterType="long">
+    <update id="deletePost" parameterType="Post">
         UPDATE post
         SET is_deleted = true
         WHERE post_id = #{postId}

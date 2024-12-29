@@ -16,7 +16,7 @@ public interface PostMapper {
 
     void updatePost(Post post);
 
-    void deletePost(Long postId);
+    void deletePost(Post post);
 
     void incrementViews(Long postId);
 
