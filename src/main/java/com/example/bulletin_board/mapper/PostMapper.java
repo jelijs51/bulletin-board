@@ -19,4 +19,6 @@ public interface PostMapper {
     void deletePost(Long postId);
 
     void incrementViews(Long postId);
+
+    void verifyPassword(Long postId);
 }

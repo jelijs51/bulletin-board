@@ -4,14 +4,21 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.bulletin_board.mapper.PostMapper;
 import com.example.bulletin_board.model.Post;
 
 @Service
+@Transactional
 public class PostServiceImpl implements PostService {
 
     private final PostMapper postMapper;
+
+    public boolean verifyPassword(Long postId, String password) {
+        Post post = postMapper.getPostById(postId);
+        return post != null && post.getPassword().equals(password);
+    }
 
     @Autowired
     public PostServiceImpl(PostMapper postMapper) {
@@ -35,6 +42,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void updatePost(Post post) {
+        String password = post.getPassword();
+        Long id = post.getPostId();
+        if (!verifyPassword(id, password)) {
+            throw new IllegalArgumentException("Password does not match");
+        }
         postMapper.updatePost(post);
     }
 

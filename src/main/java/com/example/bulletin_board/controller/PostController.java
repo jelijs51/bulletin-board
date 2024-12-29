@@ -16,7 +16,7 @@ import com.example.bulletin_board.model.Post;
 import com.example.bulletin_board.service.PostService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/post")
 public class PostController {
     private final PostService postService;
 

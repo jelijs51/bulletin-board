@@ -14,14 +14,14 @@
 
     <insert id="insertPost" parameterType="Post">
         INSERT INTO post (title, content, creation_date, modification_date, views, author, password, is_deleted)
-        VALUES (#{title}, #{content}, #{creationDate}, #{modificationDate}, #{views}, #{author}, #{password}, #{isDeleted})
+        VALUES (#{title}, #{content}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{views}, #{author}, #{password}, #{isDeleted})
     </insert>
 
     <update id="updatePost" parameterType="Post">
         UPDATE post
         SET title = #{title},
             content = #{content},
-            modification_date = #{modificationDate},
+            modification_date = CURRENT_TIMESTAMP,
             views = #{views},
             author = #{author},
             password = #{password}
