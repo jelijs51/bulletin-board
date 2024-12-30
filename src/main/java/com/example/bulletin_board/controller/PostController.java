@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,12 +37,14 @@ public class PostController {
     }
 
     @PostMapping
+    @CrossOrigin(origins = "http://127.0.0.1:5173")
     public ResponseEntity<String> createPost(@RequestBody Post post) {
         postService.createPost(post);
         return new ResponseEntity<>("Post successfully created", HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
+    @CrossOrigin(origins = "http://127.0.0.1:5173")
     public ResponseEntity<?> getPostById(@PathVariable("id") Long postId) {
         Post post = postService.getPostById(postId);
         if (post != null) {
@@ -52,6 +55,7 @@ public class PostController {
     }
 
     @GetMapping
+    @CrossOrigin(origins = "http://127.0.0.1:5173")
     public ResponseEntity<List<PostViewResponse>> getAllPosts() {
         List<Post> posts = postService.getAllPosts();
         List<PostViewResponse> postViewResponses = new ArrayList<>();
@@ -62,6 +66,7 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
+    @CrossOrigin(origins = "http://127.0.0.1:5173")
     public ResponseEntity<String> updatePost(@PathVariable("id") Long postId, @RequestBody Post post) {
         post.setPostId(postId);
         postService.updatePost(post);
@@ -69,6 +74,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
+    @CrossOrigin(origins = "http://127.0.0.1:5173")
     public ResponseEntity<String> deletePost(@PathVariable("id") Long postId, @RequestBody Post post) {
         post.setPostId(postId);
         postService.deletePost(post);
@@ -76,6 +82,7 @@ public class PostController {
     }
 
     @PutMapping("/{id}/increment-views")
+    @CrossOrigin(origins = "http://127.0.0.1:5173")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<String> incrementViews(@PathVariable("id") Long postId) {
         postService.incrementViews(postId);

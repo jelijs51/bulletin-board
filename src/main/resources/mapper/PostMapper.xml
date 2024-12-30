@@ -5,7 +5,9 @@
 <mapper namespace="com.example.bulletin_board.mapper.PostMapper">
 
     <select id="getAllPosts" resultType="Post">
-        SELECT * FROM post WHERE is_deleted = false
+        SELECT * FROM post p
+        WHERE p.is_deleted = false
+        ORDER BY p.modification_date DESC, p.creation_date DESC, p.post_id DESC;
     </select>
 
     <select id="getPostById" resultType="Post">
