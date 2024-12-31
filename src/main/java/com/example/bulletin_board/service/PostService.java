@@ -5,15 +5,13 @@ import java.util.List;
 import com.example.bulletin_board.model.Post;
 
 public interface PostService {
-    List<Post> getAllPosts();
+    List<Post> getAllPosts(Long lastPostId);
 
     Post getPostById(Long postId);
 
-    void createPost(Post post);
+    Post createPost(Post post);
 
     void updatePost(Post post);
 
     void deletePost(Post post);
-
-    void incrementViews(Long postId);
 }

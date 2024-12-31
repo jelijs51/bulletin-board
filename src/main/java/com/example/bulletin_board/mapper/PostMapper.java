@@ -8,7 +8,7 @@ import com.example.bulletin_board.model.Post;
 
 @Mapper
 public interface PostMapper {
-    List<Post> getAllPosts();
+    List<Post> getAllPosts(Long lastPostId);
 
     Post getPostById(Long postId);
 

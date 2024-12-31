@@ -2,7 +2,6 @@ package com.example.bulletin_board.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,27 +30,43 @@ public class PostServiceImpl implements PostService {
         return post != null;
     }
 
-    @Autowired
+    private boolean isValidLength(String text, int maxKorean, int maxNormal) {
+        if (text == null) {
+            return false;
+        }
+        boolean isKorean = text.matches(".*\\p{IsHangul}.*");
+        return isKorean ? text.length() <= maxKorean : text.length() <= maxNormal;
+    }
+
     public PostServiceImpl(PostMapper postMapper) {
         this.postMapper = postMapper;
     }
 
     @Override
-    public List<Post> getAllPosts() {
-        return postMapper.getAllPosts();
+    public List<Post> getAllPosts(Long lastPostId) {
+        return postMapper.getAllPosts(lastPostId);
     };
 
     @Override
     public Post getPostById(Long postId) {
+        postMapper.incrementViews(postId);
         return postMapper.getPostById(postId);
     }
 
     @Override
-    public void createPost(Post post) {
+    public Post createPost(Post post) {
+        if (!isValidLength(post.getTitle(), 50, 100)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title exceeds the allowed length.");
+        }
+
+        if (!isValidLength(post.getAuthor(), 10, 20)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Author name exceeds the allowed length.");
+        }
         String password = post.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
         post.setPassword(encodedPassword);
         postMapper.insertPost(post);
+        return post;
     }
 
     @Override
@@ -62,6 +77,7 @@ public class PostServiceImpl implements PostService {
         if (!validatePassword(post)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password");
         }
+
         postMapper.updatePost(post);
     }
 
@@ -75,13 +91,4 @@ public class PostServiceImpl implements PostService {
         }
         postMapper.deletePost(post);
     }
-
-    @Override
-    public void incrementViews(Long postId) {
-        if (!checkValidPost(postId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
-        }
-        postMapper.incrementViews(postId);
-    }
-
 }

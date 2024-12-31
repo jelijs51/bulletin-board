@@ -3,7 +3,6 @@ package com.example.bulletin_board.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.bulletin_board.model.Post;
@@ -26,7 +25,6 @@ import com.example.bulletin_board.service.PostService;
 public class PostController {
     private final PostService postService;
 
-    @Autowired
     public PostController(PostService postService) {
         this.postService = postService;
     }
@@ -37,14 +35,15 @@ public class PostController {
     }
 
     @PostMapping
-    @CrossOrigin(origins = "http://127.0.0.1:5173")
-    public ResponseEntity<String> createPost(@RequestBody Post post) {
-        postService.createPost(post);
-        return new ResponseEntity<>("Post successfully created", HttpStatus.CREATED);
+    @CrossOrigin(origins = "http://localhost:5173")
+    public ResponseEntity<PostViewResponse> createPost(@RequestBody Post post) {
+        Post postResponse = postService.createPost(post);
+        PostViewResponse postViewResponse = mapToDto(postResponse);
+        return new ResponseEntity<>(postViewResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    @CrossOrigin(origins = "http://127.0.0.1:5173")
+    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<?> getPostById(@PathVariable("id") Long postId) {
         Post post = postService.getPostById(postId);
         if (post != null) {
@@ -55,9 +54,9 @@ public class PostController {
     }
 
     @GetMapping
-    @CrossOrigin(origins = "http://127.0.0.1:5173")
-    public ResponseEntity<List<PostViewResponse>> getAllPosts() {
-        List<Post> posts = postService.getAllPosts();
+    @CrossOrigin(origins = "http://localhost:5173")
+    public ResponseEntity<List<PostViewResponse>> getAllPosts(@RequestParam(required = false) Long lastPostId) {
+        List<Post> posts = postService.getAllPosts(lastPostId);
         List<PostViewResponse> postViewResponses = new ArrayList<>();
         for (Post post : posts) {
             postViewResponses.add(mapToDto(post));
@@ -66,7 +65,7 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    @CrossOrigin(origins = "http://127.0.0.1:5173")
+    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<String> updatePost(@PathVariable("id") Long postId, @RequestBody Post post) {
         post.setPostId(postId);
         postService.updatePost(post);
@@ -74,18 +73,10 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    @CrossOrigin(origins = "http://127.0.0.1:5173")
+    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<String> deletePost(@PathVariable("id") Long postId, @RequestBody Post post) {
         post.setPostId(postId);
         postService.deletePost(post);
         return ResponseEntity.ok("successfully delete post");
-    }
-
-    @PutMapping("/{id}/increment-views")
-    @CrossOrigin(origins = "http://127.0.0.1:5173")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<String> incrementViews(@PathVariable("id") Long postId) {
-        postService.incrementViews(postId);
-        return ResponseEntity.ok("successfully increase views");
     }
 }

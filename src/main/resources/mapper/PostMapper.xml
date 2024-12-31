@@ -7,26 +7,26 @@
     <select id="getAllPosts" resultType="Post">
         SELECT * FROM post p
         WHERE p.is_deleted = false
-        ORDER BY p.modification_date DESC, p.creation_date DESC, p.post_id DESC;
+        <if test="lastPostId != null">
+            AND p.post_id &lt; #{lastPostId}
+        </if>
+        ORDER BY p.post_id DESC
+        LIMIT 5;
     </select>
 
     <select id="getPostById" resultType="Post">
         SELECT * FROM post WHERE post_id = #{postId} AND is_deleted = false
     </select>
 
-    <insert id="insertPost" parameterType="Post">
+    <insert id="insertPost" parameterType="Post" useGeneratedKeys="true" keyProperty="postId">
         INSERT INTO post (title, content, creation_date, modification_date, views, author, password, is_deleted)
         VALUES (#{title}, #{content}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{views}, #{author}, #{password}, #{isDeleted})
     </insert>
 
     <update id="updatePost" parameterType="Post">
         UPDATE post
-        SET title = #{title},
-            content = #{content},
-            modification_date = CURRENT_TIMESTAMP,
-            views = #{views},
-            author = #{author},
-            password = #{password}
+        SET content = #{content},
+            modification_date = CURRENT_TIMESTAMP
         WHERE post_id = #{postId}
     </update>
 
@@ -36,7 +36,7 @@
         WHERE post_id = #{postId}
     </update>
 
-    <update id="incrementViews" parameterType="long">
+    <update id="incrementViews" parameterType="Long">
         UPDATE post
         SET views = views + 1
         WHERE post_id = #{postId}
